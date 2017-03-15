@@ -26,13 +26,16 @@ var app = express();
 /**
  * Setar o motor de views no express
  */
-app.set('views engine', 'ejs');
+app.set('view engine', 'ejs');
 app.set('views', './application/views');
 
 /**
  * Configurar o middleware express.static
  */
-app.use(express.static('./application/public'));
+app.use(express.static('./application/public/'));
+
+app.use(expressValidator());
+
 /**
  * Configurar o middleware bodyParser
  */
