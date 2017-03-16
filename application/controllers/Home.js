@@ -10,7 +10,6 @@ Home.prototype.index = function () {
 
 Home.prototype.login = function () {
     var body = this._req.body;
-    console.log(body);
 
     this._req.assert('apelido', 'Apelido é obrigatório').notEmpty();
     this._req.assert('apelido', 'Apelido deve possuir tamanho 3 e 15 caracteres').len(3, 15);
@@ -18,10 +17,9 @@ Home.prototype.login = function () {
     var errors = this._req.validationErrors();
 
     if(errors !== false){
-        errors = [];
         this._res.render('index', {errors: errors, apelido: body.apelido});
     }
-
+    errors = [];
     this._res.render('chat', {errors: errors});
 }
 

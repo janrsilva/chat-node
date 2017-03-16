@@ -36,6 +36,21 @@
                             </form>
                         </div>
                     </div>
+                    <div>
+                        <% if(errors != undefined && errors.length) {%>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        <% for(var i=0; i<errors.length; i++) {%>
+                                            <li><%= errors[i].msg %></li>
+                                        <% } %>
+                                    <ul>
+                                </div>
+                            </div>
+                        </div>
+                        <% }%>        
+                    </div>
                 </div>
             </div>
         </div>
