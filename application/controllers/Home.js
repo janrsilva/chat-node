@@ -1,11 +1,12 @@
 function Home(app, req, res) {
     this._app = app;
     this._req = req;
-    this._res = res;    
+    this._res = res;
+    this._io = this._app.get('io');
 }
 
 Home.prototype.index = function () {
-    this._res.render('index');
+    this._res.render('index', {errors:[]});
 }
 
 Home.prototype.login = function () {
@@ -19,8 +20,12 @@ Home.prototype.login = function () {
     if(errors !== false){
         this._res.render('index', {errors: errors, apelido: body.apelido});
     }
+
+    this._io.emit('alguemEntrou', {apelido: body.apelido, msg: body.apelido + " acabou de entrar..."});
+
     errors = [];
-    this._res.render('chat', {errors: errors});
+    this._res.redirect('/chat?apelido='+body.apelido);
+    // this._res.render('chat', {errors: errors});
 }
 
 module.exports = function () {
