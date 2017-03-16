@@ -30,4 +30,12 @@ io.on('connection', function (socket) {
     socket.on('disconnect', function () {
         console.log("Usuário desconectado!");
     })
+
+    socket.on('sendMessage', function (data) {
+        socket.emit('receiveMessage', data);
+    })
+    
+    socket.on('sendMessage', function (data) {
+        socket.broadcast.emit('receiveMessage', data);
+    })
 });

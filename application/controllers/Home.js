@@ -24,8 +24,8 @@ Home.prototype.login = function () {
     this._io.emit('alguemEntrou', {apelido: body.apelido, msg: body.apelido + " acabou de entrar..."});
 
     errors = [];
-    this._res.redirect('/chat?apelido='+body.apelido);
-    // this._res.render('chat', {errors: errors});
+    // this._res.redirect('/chat?apelido='+body.apelido);
+    this._res.render('chat', {errors: errors, usuario: body.apelido});
 }
 
 module.exports = function () {

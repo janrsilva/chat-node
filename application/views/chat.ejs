@@ -105,16 +105,15 @@
 		<nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
 			<div class="container">
 				<div class="panel-body campo-mensagem">
-					<form action="/chat" method="POST">
-						<div class="col-md-12">
-							<div class="input-group">
-								<input type="text" class="form-control" placeholder="Mensagem">
-								<span class="input-group-btn">
-									<button class="btn btn-default" type="button">></button>
-								</span>
-							</div>
+					<div class="col-md-12">
+						<input type="hidden" id="apelido" value="<%= usuario %>">
+						<div class="input-group">
+							<input type="text" class="form-control" placeholder="Mensagem"  id="mensagem">
+							<span class="input-group-btn">
+								<button class="btn btn-default" id="enviar" type="button">></button>
+							</span>
 						</div>
-					</form>
+					</div>
 				</div>
 			</div>
 		</nav>		
@@ -122,17 +121,71 @@
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 		<script src="/socket.io/socket.io.js"></script>
 		<script>
+
+			setCookie('apelido', '<%= usuario %>', 1);
+
 			var socket = io('http://localhost:8080/');
 
+			$('#enviar').click(function(){
+				socket.emit('sendMessage', {apelido: getCookie('apelido'), msg: $('#mensagem').val()});
+				$('#mensagem').val('');
+			});
+			
+			$('#mensagem').keypress(function(e) {
+				if(e.which == 13) {
+					socket.emit('sendMessage', {apelido: getCookie('apelido'), msg: $('#mensagem').val()});
+					$('#mensagem').val('');
+				}
+			});
+
 			socket.on('alguemEntrou', function(data){
+				var html = '<div class="dialogo">'; 
+					html += '<h4>' + data.msg + '</h4>';
+					html += '</div>';
+
+				$('#dialogos').after(html);
+				scrollTop();
+				console.log(html);
+			});
+
+			socket.on('receiveMessage', function(data){
 				var html = '<div class="dialogo">'; 
 					html += '<h4>' + data.apelido + '</h4>';
 					html += '<p>' + data.msg + '</p>';
 					html += '</div>';
 
-				$('#dialogos').append(html);
+				$('#dialogos').append(html).after();
+				scrollTop();
 				console.log(html);
 			});
+
+			function setCookie(cname, cvalue, exdays) {
+				var d = new Date();
+				d.setTime(d.getTime() + (exdays*24*60*60*1000));
+				var expires = "expires="+ d.toUTCString();
+				document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+			}
+
+			function getCookie(cname) {
+				var name = cname + "=";
+				var decodedCookie = decodeURIComponent(document.cookie);
+				var ca = decodedCookie.split(';');
+				for(var i = 0; i <ca.length; i++) {
+					var c = ca[i];
+					while (c.charAt(0) == ' ') {
+						c = c.substring(1);
+					}
+					if (c.indexOf(name) == 0) {
+						return c.substring(name.length, c.length);
+					}
+				}
+				return "";
+			}
+
+			function scrollTop(){
+				var n = $(document).height();
+    			$('html, body').animate({ scrollTop: n }, 50);
+			}
 		</script>
 	</body>
 </html>
